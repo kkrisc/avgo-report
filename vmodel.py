@@ -26,9 +26,13 @@ def resid(p):
     mod=cumvar(p,T)
     return (np.sqrt(np.maximum(mod,1e-12)/T)-A)*100*np.sqrt(1/np.sqrt(T))   # fit in vol pts, weight short end
 
+# With few expirations the decay speed isn't identifiable: pin it to ~20 days and fit the rest.
+FEW=len(T)<6
+lb=[1e-4,1e-4,0.0547 if FEW else 1e-3,0.0]; ub=[6,2,0.0548 if FEW else 5,0.6]
 best=None
 for g in [[0.8,0.25,0.15,0.08],[1.0,0.2,0.3,0.12],[0.6,0.3,0.08,0.05],[0.9,0.26,0.5,0.10]]:
-    r=least_squares(resid,g,bounds=([1e-4,1e-4,1e-3,0.0],[6,2,5,0.6]))
+    g=list(np.clip(g,lb,[u-1e-6 for u in ub])); g[2]=min(max(g[2],lb[2]),ub[2]-1e-6)
+    r=least_squares(resid,g,bounds=(lb,ub))
     if best is None or r.cost<best.cost: best=r
 v0,vinf,tau,J=best.x
 if not HAS_EVENT: J=0.0; best.x[3]=0.0

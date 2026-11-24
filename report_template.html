@@ -1,4 +1,4 @@
-<title>Pricing the Broadcom Drop</title>
+<title>{{title}}</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -136,6 +136,15 @@ caption{caption-side:top;text-align:left;padding:16px 19px 4px;font-family:var(-
 .smv{text-align:right;font-family:var(--f-mono);font-size:15px;font-weight:600}
 .spx{text-align:right;font-family:var(--f-mono);font-size:14px;color:var(--ink-2)}
 
+.topnav{position:sticky;top:env(safe-area-inset-top,0px);z-index:15;background:var(--paper);border-bottom:1px solid var(--rule);
+        margin:0 calc(-1 * max(16px, env(safe-area-inset-left, 0px))) 0;padding:0 max(16px, env(safe-area-inset-left, 0px))}
+.topnav .navin{max-width:1000px;margin:0 auto;display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;padding:8px 0}
+.topnav .navin::-webkit-scrollbar{display:none}
+.topnav a{font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;text-decoration:none;color:var(--ink-2);padding:6px 10px;border-radius:3px;white-space:nowrap;border:1px solid transparent}
+.topnav a:hover{background:var(--surface-2)}
+.topnav a:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.topnav a[aria-current="page"]{color:var(--accent-ink);border-color:var(--accent-line);background:var(--accent-wash);font-weight:600}
+.topnav a.home{font-family:var(--f-body);letter-spacing:0;color:var(--ink);font-weight:600}
 .note{margin:22px 0 0;padding:0 0 0 16px;border-left:2px solid var(--rule)}
 .note .nd{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--muted)}
 .note h3{margin:4px 0 6px;font-size:17.5px}
@@ -173,10 +182,11 @@ footer{margin:64px 0 0;padding-top:22px;border-top:1px solid var(--rule);font-si
 </style>
 
 <div id="tip" hidden></div>
+{{NAV}}
 <div class="wrap">
 <header>
-  <div class="eyebrow"><span class="dot"></span><span>Options-implied analysis</span><span>·</span><span>AVGO · Nasdaq</span><span>·</span><span>{{asof}}</span><span class="chip">{{chip}}</span></div>
-  <h1>Pricing the Broadcom Drop</h1>
+  <div class="eyebrow"><span class="dot"></span><span>Options-implied analysis</span><span>·</span><span>{{sym}}</span><span>·</span><span>{{asof}}</span><span class="chip">{{chip}}</span></div>
+  <h1>{{title}}</h1>
   <p class="standfirst">{{standfirst}}</p>
 </header>
 
@@ -188,6 +198,7 @@ footer{margin:64px 0 0;padding-top:22px;border-top:1px solid var(--rule);font-si
   <div class="cell"><div class="k">From 52w high</div><div class="v dn">−{{from_high}}%</div><div class="s">high {{high52}} · low {{low52}}</div></div>
 </div>
 <div class="sparkband"><div id="c-spark"></div></div>
+{{LIMITED_NOTE}}
 
 <div class="col">
 <section>
@@ -200,12 +211,12 @@ footer{margin:64px 0 0;padding-top:22px;border-top:1px solid var(--rule);font-si
 <div class="tbl">
   <table>
     <caption>Forecast, real-world measure · from {{spot}}</caption>
-    <thead><tr><th>Horizon</th><th>Date</th><th>Central</th><th>50% band</th><th>80% band</th><th>P(up)</th><th>P(&lt;{{low_lbl}})</th><th>P(&gt;350)</th></tr></thead>
+    <thead><tr><th>Horizon</th><th>Date</th><th>Central</th><th>50% band</th><th>80% band</th><th>P(up)</th><th>P(&lt;−15%)</th><th>P(&gt;+15%)</th></tr></thead>
     <tbody>
 {{ROWS_FORECAST}}
     </tbody>
   </table>
-  <div class="tnote"><b>Read this as:</b> at 45 days there is a 50% chance AVGO sits between ${{b45_lo}} and ${{b45_hi}}, a ${{b45_w}} window. The central estimate barely moves across the horizons because the market prices almost no directional drift. What grows is the width. {{fc_earn}}</div>
+  <div class="tnote"><b>Read this as:</b> at 45 days there is a 50% chance {{sym}} sits between ${{b45_lo}} and ${{b45_hi}}, a ${{b45_w}} window. The central estimate barely moves across the horizons because the market prices almost no directional drift. What grows is the width. {{fc_earn}}</div>
 </div>
 
 <div class="col">
@@ -244,16 +255,19 @@ footer{margin:64px 0 0;padding-top:22px;border-top:1px solid var(--rule);font-si
   <figcaption>{{hist_caption}}</figcaption>
 </figure>
 
+{{CAPEX_SECTION}}
+{{EXPECT_SECTION}}
+
 <div class="col">
 <section>
   <div class="kicker">Cross-complex</div>
-  <h2>Broadcom against the chip complex</h2>
-  <p>Broadcom trades as part of the AI-semiconductor group. Comparing it with Nvidia, AMD, the semiconductor ETF (SMH) and the Nasdaq-100 (QQQ) separates moves that are about Broadcom from moves that are about the group.</p>
+  <h2>{{name}} against its peers</h2>
+  <p>{{group}} Comparing it with {{peer_list}} separates moves that are about {{name}} from moves that are about the group.</p>
 </section>
 </div>
 
 <figure>
-  <div class="figtitle">Change over the last five sessions</div>
+  <div class="figtitle">Change over the last {{n5}} sessions</div>
   <div class="figsub">Through {{cx_last}}</div>
   <div class="chartbox"><div class="chart" id="c-complex"></div></div>
   <figcaption>{{cx_caption}}</figcaption>
@@ -261,8 +275,8 @@ footer{margin:64px 0 0;padding-top:22px;border-top:1px solid var(--rule);font-si
 
 <div class="tbl">
   <table>
-    <caption>Daily moves, last five sessions</caption>
-    <thead><tr><th>Session</th><th>AVGO</th><th>NVDA</th><th>AMD</th><th>SMH</th><th>QQQ</th></tr></thead>
+    <caption>Daily moves, last {{n5}} sessions</caption>
+    <thead><tr><th>Session</th>{{DAILY_HEAD}}</tr></thead>
     <tbody>
 {{ROWS_DAILY}}
     </tbody>
@@ -273,8 +287,8 @@ footer{margin:64px 0 0;padding-top:22px;border-top:1px solid var(--rule);font-si
 <div class="col">
 <section>
   <div class="kicker">First, the futures question</div>
-  <h2>There are no Broadcom futures</h2>
-  <p>Single-stock futures haven't traded in the US since OneChicago closed in 2020, so there is no AVGO futures contract to pull. The <strong>implied forward</strong> embedded in the options chain does the same job. For every expiration, put-call parity pins the price at which the market will transact AVGO on that date.</p>
+  <h2>There are no {{name}} futures</h2>
+  <p>Single-stock futures haven't traded in the US since OneChicago closed in 2020, so there is no {{sym}} futures contract to pull. The <strong>implied forward</strong> embedded in the options chain does the same job. For every expiration, put-call parity pins the price at which the market will transact {{sym}} on that date.</p>
 </section>
 </div>
 
@@ -287,7 +301,7 @@ footer{margin:64px 0 0;padding-top:22px;border-top:1px solid var(--rule);font-si
       <tr><td class="lbl">Days out</td>{{FWD_DAYS}}</tr>
     </tbody>
   </table>
-  <div class="tnote">The curve rises at roughly <b>{{carry}}% a year</b>, which is the 4.12% risk-free rate minus Broadcom's 0.75% dividend yield. That is pure cost of carry. <b>The forward curve contains no forecast.</b> It is an arbitrage relationship, and an upward slope reflects an interest rate rather than a view. The forecast lives in implied volatility.{{fwd_note}}</div>
+  <div class="tnote">The curve rises at roughly <b>{{carry}}% a year</b>, which is the 4.12% risk-free rate minus {{name}}'s {{div}}% dividend yield. That is pure cost of carry. <b>The forward curve contains no forecast.</b> It is an arbitrage relationship, and an upward slope reflects an interest rate rather than a view. The forecast lives in implied volatility.{{fwd_note}}</div>
 </div>
 
 <div class="col">
@@ -324,7 +338,7 @@ footer{margin:64px 0 0;padding-top:22px;border-top:1px solid var(--rule);font-si
 <section>
   <div class="kicker">The test</div>
   <h2>{{earn_h2}}</h2>
-  <p>An implied move is only expensive or cheap relative to what this stock does on earnings day. Broadcom's record splits sharply by era.</p>
+  <p>An implied move is only expensive or cheap relative to what this stock does on earnings day. {{earn_era}}</p>
 </section>
 </div>
 
@@ -370,7 +384,7 @@ footer{margin:64px 0 0;padding-top:22px;border-top:1px solid var(--rule);font-si
   <h3>Why the two measures differ</h3>
   <p>The risk-neutral distribution read straight off option prices is <em>not</em> a forecast. It is drift-free by construction, and it is usually too wide because investors pay a premium for protection. Turning it into a real-world forecast takes two adjustments.</p>
   <p><strong>Volatility adjustment.</strong> {{calib_text}}</p>
-  <p><strong>Drift.</strong> A 4.12% risk-free rate plus Broadcom's 1.51 beta against a 4.5% equity risk premium gives 10.9% a year, about 0.9% a month. Over 45 days that is ${{drift45}} on a ${{spot0}} stock, which is why the central estimate hardly moves. <strong>At this volatility, drift is noise.</strong></p>
+  <p><strong>Drift.</strong> A 4.12% risk-free rate plus {{name}}'s {{beta}} beta{{beta_note}} against a 4.5% equity risk premium gives {{mu}}% a year, about {{mu_m}}% a month. Over 45 days that is ${{drift45}} on a ${{spot0}} stock, which is why the central estimate hardly moves. <strong>At this volatility, drift is noise.</strong></p>
 </section>
 </div>
 
@@ -421,11 +435,11 @@ footer{margin:64px 0 0;padding-top:22px;border-top:1px solid var(--rule);font-si
 <section>
   <div class="kicker">Method</div>
   <h2>How this was built</h2>
-  <p>All {{n_exp}} listed expirations and {{n_contracts}} contracts pulled from Yahoo Finance. {{method_prices}} Forward and discount factor per expiration come from open-interest-weighted put-call parity on near-the-money strikes{{method_fwd}}. Implied volatilities are solved by Brent inversion of Black-76 against that forward, using the out-of-the-money side at every strike. An SVI smile is fitted per expiration, densities are recovered by Breeden–Litzenberger on the smoothed smile, and interpolation across expirations runs in cumulative-variance time so the earnings jump stays on its date. The next earnings date and past report dates come from Yahoo's earnings calendar. Realized volatility, earnings reactions and the volatility calibration use daily closes since 2019. Cross-complex moves and correlations use daily closes of NVDA, AMD, SMH and QQQ alongside AVGO.</p>
+  <p>All {{n_exp}} listed expirations and {{n_contracts}} contracts pulled from Yahoo Finance. {{method_prices}} Forward and discount factor per expiration come from open-interest-weighted put-call parity on near-the-money strikes{{method_fwd}}. Implied volatilities are solved by Brent inversion of Black-76 against that forward, using the out-of-the-money side at every strike. An SVI smile is fitted per expiration, densities are recovered by Breeden–Litzenberger on the smoothed smile, and interpolation across expirations runs in cumulative-variance time so the earnings jump stays on its date. The next earnings date and past report dates come from Yahoo's earnings calendar. Realized volatility, earnings reactions and the volatility calibration use daily closes since {{hist_since}}. Cross-complex moves and correlations use daily closes of {{peer_syms}} alongside {{sym}}.</p>
 </section>
 
 <footer>
-  <p><strong>Broadcom Inc. (AVGO)</strong> · Market data as of {{asof}} · Spot ${{spot}} · Market cap ${{mcap}}T · {{earn_footer}} · First edition: 20 Nov 2026</p>
+  <p><strong>{{legal}} ({{sym}})</strong> · Market data as of {{asof}} · Spot ${{spot}} · Market cap ${{mcap}}T · {{earn_footer}} · First edition: {{first_edition}}</p>
   <p style="margin-top:12px">Prepared as quantitative analysis, not investment advice. Options involve substantial risk of loss. The probabilities here come from market prices and historical data. They are estimates of likelihood, and the distribution of a single stock over 45 days is wide enough that any outcome inside these bands should be considered unsurprising.</p>
 </footer>
 </div>
@@ -482,7 +496,8 @@ const fdate=(iso,yr)=>new Date(iso+"T12:00:00").toLocaleDateString("en-GB",Objec
 
 /* ---------- sparkline ---------- */
 function drawSpark(){
-  const {s,W,H}=mk("c-spark",()=>62,"AVGO closing price over the last 90 sessions");
+  if(D.hist.length<2){ document.getElementById("c-spark").replaceChildren(); return; }
+  const {s,W,H}=mk("c-spark",()=>62,"Closing price over the last 90 sessions");
   const h=D.hist, ps=h.map(d=>d.p), lo=Math.min(...ps), hi=Math.max(...ps), pad=(hi-lo)*0.18;
   const x=i=>i/(h.length-1)*(W-10), y=v=>H-4-((v-(lo-pad))/((hi+pad)-(lo-pad)))*(H-10);
   let dl="", da=`M 0 ${H}`;
@@ -565,6 +580,7 @@ function drawTerm(){
 
 /* ---------- earnings bars ---------- */
 function drawEarn(){
+  if(!D.earn.length){ empty("c-earn","No earnings reports as a listed company yet."); return; }
   const {s,W,H,narrow}=mk("c-earn",w=>w<560?270:340,"Next-session move after each recent earnings report");
   const L=narrow?38:52,R=narrow?8:24,T=28,B=44, pw=W-L-R, ph=H-T-B, bars=D.earn, J=D.jump;
   const mv=bars.map(b=>b.mv), yMin=Math.min(-15,Math.floor((Math.min(...mv)-3)/5)*5), yMax=Math.max(15,Math.ceil((Math.max(...mv)+3)/5)*5);
@@ -588,7 +604,7 @@ function drawEarn(){
 
 /* ---------- fan chart ---------- */
 function drawFan(){
-  const {s,W,H,narrow}=mk("c-fan",w=>w<560?320:420,"Forecast cone for AVGO over 45 days with 50% and 80% bands and the market-implied 5% and 95% levels");
+  const {s,W,H,narrow}=mk("c-fan",w=>w<560?320:420,"Forecast cone over 45 days with 50% and 80% bands and the market-implied 5% and 95% levels");
   const L=narrow?42:58,R=narrow?40:84,T=30,B=40, pw=W-L-R, ph=H-T-B;
   const SP=D.spot, P=D.phys, RN=D.rn, days=[0,...P.map(r=>r.dte)];
   const g=k=>[SP,...P.map(r=>r[k])], p10=g("p10"),p25=g("p25"),med=g("median"),p75=g("p75"),p90=g("p90");
@@ -627,7 +643,7 @@ function drawFan(){
 
 /* ---------- cross-complex bars ---------- */
 function drawComplex(){
-  const {s,W,H,narrow}=mk("c-complex",w=>w<560?250:300,"Five-session change for AVGO, NVDA, AMD, SMH and QQQ");
+  const {s,W,H,narrow}=mk("c-complex",w=>w<560?250:300,"Recent change for the stock and its peers");
   const L=narrow?38:56,R=narrow?8:30,T=22,B=40, pw=W-L-R, ph=H-T-B;
   const data=D.complex.slice().sort((a,b)=>b.v-a.v);
   const vs=data.map(d=>d.v), yMin=Math.floor((Math.min(0,...vs)-3)/5)*5, yMax=Math.ceil((Math.max(0,...vs)+3)/5)*5;
@@ -635,16 +651,42 @@ function drawComplex(){
   const step=(yMax-yMin)>30?10:5;
   for(let v=Math.ceil(yMin/step)*step; v<=yMax; v+=step) grid(s,L,pw,Y(v),(v>0?"+":v<0?"−":"")+Math.abs(v)+"%",v===0);
   data.forEach((d,i)=>{
-    const cx=L+bw*i+bw/2, up=d.v>=0, y=up?Y(d.v):Y(0), h=Math.abs(Y(d.v)-Y(0)), hi=d.t==="AVGO";
+    const cx=L+bw*i+bw/2, up=d.v>=0, y=up?Y(d.v):Y(0), h=Math.abs(Y(d.v)-Y(0)), hi=d.t===D.sym;
     s.appendChild(el("rect",{x:cx-inner/2,y,width:inner,height:Math.max(h,1),fill:hi?"var(--accent)":"var(--muted)",opacity:hi?1:.55,rx:3}));
     tx(s,cx,up?Y(d.v)-7:Y(d.v)+16,fmt(d.v)+"%",{"text-anchor":"middle",fill:hi?"var(--ink)":"var(--ink-2)","font-size":narrow?11:12.5,"font-weight":hi?700:500});
     tx(s,cx,T+ph+22,d.t,{"text-anchor":"middle",fill:hi?"var(--ink)":"var(--muted)","font-size":12,"font-weight":hi?700:500});
     const r=el("rect",{x:cx-bw/2,y:T,width:bw,height:ph,fill:"transparent"}); s.appendChild(r);
-    hit(r,{t:d.t,l:d.days.map(x=>`${x[0]}: ${fmt(x[1])}%`),m:`5 sessions: ${fmt(d.v)}% · 20 sessions: ${fmt(d.v20)}%`});
+    hit(r,{t:d.t,l:d.days.map(x=>`${x[0]}: ${fmt(x[1])}%`),m:`${D.n5} sessions: ${fmt(d.v)}% · ${D.n20} sessions: ${fmt(d.v20)}%`});
   });
 }
 
-function drawAll(){ drawSpark(); drawHistory(); drawTerm(); drawEarn(); drawFan(); drawComplex(); }
+/* ---------- AI spending: small multiples, one panel per buyer ---------- */
+function drawCapex(){
+  if(!D.capex || !document.getElementById("c-capex")) return;
+  const C=D.capex, Q=C.quarters, cos=C.cos;
+  const box=document.getElementById("c-capex"), Wb=Math.max(280,Math.round(box.clientWidth));
+  const cols=Wb<560?2:5, rows=Math.ceil(cos.length/cols), ph=118, gap=14, pw=(Wb-(cols-1)*gap)/cols;
+  const {s}=mk("c-capex",()=>rows*(ph+gap),"Quarterly capital spending by the largest AI buyers");
+  const vmax=Math.max(...cos.flatMap(c=>c.vals.filter(v=>v!=null)))*1.18;
+  const ql=q=>"Q"+q.slice(-1)+"’"+q.slice(2,4);
+  cos.forEach((c,k)=>{
+    const ox=(k%cols)*(pw+gap), oy=Math.floor(k/cols)*(ph+gap), top=oy+22, bh=ph-44, bw=pw/Q.length, inner=Math.min(bw*0.62,26);
+    tx(s,ox,oy+13,c.name,{fill:"var(--ink)","font-family":"var(--f-body)","font-size":12.5,"font-weight":600});
+    s.appendChild(el("line",{x1:ox,x2:ox+pw,y1:top+bh,y2:top+bh,stroke:"var(--rule)","stroke-width":1}));
+    c.vals.forEach((v,i)=>{ const cx=ox+bw*i+bw/2;
+      if(v==null){ tx(s,cx,top+bh-4,"–",{"text-anchor":"middle"}); return; }
+      const hgt=v/vmax*bh, last=i===Q.length-1;
+      s.appendChild(el("rect",{x:cx-inner/2,y:top+bh-hgt,width:inner,height:Math.max(hgt,1),rx:2,fill:last?"var(--accent)":"var(--blue)",opacity:last?1:.55}));
+      if(last) tx(s,cx,top+bh-hgt-5,"$"+v.toFixed(0)+"B",{"text-anchor":"middle",fill:"var(--ink)","font-size":10.5,"font-weight":600});
+      const r=el("rect",{x:cx-bw/2,y:top,width:bw,height:bh+18,fill:"transparent"}); s.appendChild(r);
+      const o=c.ocf[i]; hit(r,{t:`${c.name} · ${Q[i]}`,l:[`Capex $${v.toFixed(1)}B`],m:o?`${Math.round(v/o*100)}% of operating cash flow`:null});
+    });
+    tx(s,ox+bw/2,top+bh+13,ql(Q[0]),{"text-anchor":"start","font-size":9.5});
+    tx(s,ox+pw-bw/2,top+bh+13,ql(Q[Q.length-1]),{"text-anchor":"end","font-size":9.5});
+  });
+}
+
+function drawAll(){ drawSpark(); drawHistory(); drawCapex(); drawTerm(); drawEarn(); drawFan(); drawComplex(); }
 drawAll();
 let rt=null, lastW=innerWidth;
 addEventListener("resize",()=>{ if(Math.abs(innerWidth-lastW)<4) return; lastW=innerWidth; cancelAnimationFrame(rt); rt=requestAnimationFrame(drawAll); });

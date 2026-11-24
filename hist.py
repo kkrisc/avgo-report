@@ -1,6 +1,7 @@
 import yfinance as yf, numpy as np, pandas as pd, datetime as dt
 import warnings; warnings.filterwarnings('ignore')
-h=yf.download("AVGO",start="2019-01-01",progress=False,auto_adjust=False)
+from cfg import SYM, CONF
+h=yf.download(SYM,start=CONF.get("hist_start","2019-01-01"),progress=False,auto_adjust=False)
 if isinstance(h.columns,pd.MultiIndex): h.columns=h.columns.droplevel(1)
 h['ret']=np.log(h['Adj Close']).diff()
 h.to_pickle('hist.pkl')
@@ -48,4 +49,4 @@ for d0 in big.index:
     for k in [5,10,20,30,45]:
         if j+k<len(c): res.append((k,(float(c.iloc[j+k])/float(c.iloc[j])-1)*100))
 rr=pd.DataFrame(res,columns=['h','ret'])
-print(rr.groupby('h')['ret'].agg(['count','mean','median','min','max']).round(2).to_string())
+print(rr.groupby('h')['ret'].agg(['count','mean','median','min','max']).round(2).to_string() if len(rr) else 'none')

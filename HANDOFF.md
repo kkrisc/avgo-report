@@ -9,7 +9,23 @@ Last updated: Tue 24 Nov 2026. Read this first when picking up the work in a new
 
 ---
 
-## 1. Where things stand
+## 0. Update, 24 Nov 2026 evening: multi-ticker site
+
+- The repo now builds **six reports** from `tickers.json`: AVGO, NVDA, TSM, ANT, SPCX, NGNE, each at `/<ticker>/`, with
+  an overview page at the site root (`build_hub.py`) and a sticky menu on every page. `run_all.sh` replaces `run.sh` in
+  the workflow ("Refresh options reports", timeout 45 min). Broadcom's history carries over from the old root
+  `data.json` through `legacy_prev` in `tickers.json`.
+- **New sections:** "What the biggest AI buyers are spending" (`capex.py`: quarterly capex and operating cash flow for
+  MSFT, GOOGL, AMZN, META, ORCL, on AVGO/NVDA/TSM pages) and "What analysts expect" (consensus revenue/EPS and price
+  targets, all tickers). The next-year revenue consensus and mean price target are tracked in the edition history.
+- **Thin data:** ANT (listed 19 Nov, options since 23 Nov) had quotes on only 5 of 58 contracts on Yahoo, and NGNE's
+  quotes are 70–190% wide with only 1 of 4 expirations usable. Neither builds yet; the overview shows the reason and the
+  daily run retries. SPCX builds with a "Read with care" notice (no earnings history yet).
+- First live-quote local run, 24 Nov 14:27 ET: AVGO priced ±12.2% for 9 Dec (±10.8% at the 23 Nov close).
+- The first scheduled run (24 Nov 15:47 UTC) did not fire; a manual run at 16:39 UTC succeeded. GitHub often skips a new
+  workflow's first scheduled slot.
+
+## 1. Where things stand (single-ticker setup, superseded by section 0)
 
 | What | Value |
 |---|---|
@@ -152,6 +168,14 @@ gh run view <run-id> -R kkrisc/avgo-report --log-failed
 ---
 
 ## 9. Next steps
+
+**Multi-ticker follow-ups**
+- [ ] After the first multi-ticker deploy: check every page and the overview live, and that `/avgo/` shows 3+ editions.
+- [ ] ANT and NGNE: decide whether to add a price-based fallback (ranges from the stock's own realized volatility) for
+      stocks whose options are too thin. ANT should start working on its own as Yahoo's option quotes fill in.
+- [ ] Write first notes for NVDA, TSM and SPCX, and optional scenario trees for their next reports
+      (NVDA 24 Feb, TSM 14 Jan, SPCX 9 Feb).
+- [ ] Rename Broadcom's title to match the others ("Broadcom Options Outlook") if the user agrees (`tickers.json`).
 
 **Soon**
 - [ ] Confirm the first scheduled live run (24 Nov, 15:47 UTC) published a bid/ask edition ("24 Nov 2026, HH:MM ET" in

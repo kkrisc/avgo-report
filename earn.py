@@ -2,11 +2,12 @@
 import datetime as dt
 import pandas as pd
 
-# Fallback list of past reports (all after the close). fetch.py adds anything newer from Yahoo.
-BASE_PAST = ["2019-06-13", "2019-09-12", "2019-12-12", "2020-06-04", "2020-09-03", "2020-12-10", "2021-03-04",
+# Fallback lists of past reports (all after the close), by ticker. fetch.py adds whatever Yahoo provides.
+BASE_PAST_AVGO = ["2019-06-13", "2019-09-12", "2019-12-12", "2020-06-04", "2020-09-03", "2020-12-10", "2021-03-04",
              "2021-06-03", "2021-09-02", "2021-12-09", "2022-03-03", "2022-09-01", "2022-12-08", "2023-03-02",
              "2023-06-01", "2023-08-31", "2023-12-07", "2024-03-07", "2024-06-12", "2024-09-05", "2024-12-12",
              "2025-03-06", "2025-06-05", "2025-09-04", "2025-12-11", "2026-03-04", "2026-06-03", "2026-09-02"]
+BASE_PAST = {"AVGO": BASE_PAST_AVGO}
 
 # NYSE full-day closures, used only to find the first session after a report.
 HOLIDAYS = {"2026-11-26", "2026-12-25", "2027-01-01", "2027-01-18", "2027-02-15", "2027-03-26", "2027-05-31",

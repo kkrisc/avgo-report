@@ -1,4 +1,4 @@
-name: Refresh AVGO report
+name: Refresh options reports
 
 on:
   workflow_dispatch:          # "Run workflow" button in the GitHub mobile app or website
@@ -20,7 +20,7 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 45
     permissions:
       contents: read          # read this repo's code, nothing else
     outputs:
@@ -40,13 +40,14 @@ jobs:
         run: python -m pip install --require-hashes --no-deps -r requirements.txt
 
       # Scheduled runs (and manual runs by default) skip publishing when there are no live quotes,
-      # so a holiday or data outage never replaces a good page with a worse one.
-      - name: Run pipeline and build page
+      # so a holiday or data outage never replaces a good site with a worse one. A ticker whose run fails
+      # keeps yesterday's page (fetched from BASE_URL).
+      - name: Run pipelines and build pages
         id: build
         env:
           REQUIRE_LIVE: ${{ inputs.allow_last_trades && '0' || '1' }}
-          PREV_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/data.json
-        run: bash run.sh site/index.html
+          BASE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
+        run: bash run_all.sh site
 
       - if: steps.build.outputs.deploy == 'true'
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0

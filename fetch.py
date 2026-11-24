@@ -6,20 +6,23 @@
 # sticky-strike assumption (solve IV at the spot prevailing when it traded, reprice
 # at the close). The adjusted price is written into bid and ask so engine.py runs
 # unchanged.
-import sys, json, pickle, time, datetime as dt
+import sys, os, json, pickle, time, datetime as dt
 import numpy as np, pandas as pd, yfinance as yf
 from scipy.stats import norm
 from scipy.optimize import brentq
 import warnings; warnings.filterwarnings('ignore')
 
-RF, DIV = 0.04122, 0.0075
-tk = yf.Ticker("AVGO")
+SYM = os.environ.get("SYM", "AVGO")
+RF = 0.04122
+tk = yf.Ticker(SYM)
 
 d = tk.history(period="10d", auto_adjust=False)
 d.index = d.index.tz_convert('America/New_York')
 last_day = d.index[-1]
 spot, prev = float(d['Close'].iloc[-1]), float(d['Close'].iloc[-2])
 info = tk.info
+dy = info.get('dividendYield') or 0.0
+DIV = dy / 100 if dy > 0.2 else dy          # Yahoo reports this in percent in current versions
 now = last_day.replace(hour=16, minute=0, second=0, microsecond=0).tz_localize(None)
 
 chains = {}
@@ -30,8 +33,10 @@ for e in tk.options:
         except Exception:
             time.sleep(2)
 
-live = sum(int((C.bid > 0).sum() + (P.bid > 0).sum()) for C, P in chains.values())
-total = sum(len(C) + len(P) for C, P in chains.values())
+# Live quotes? Judge on near-the-money contracts, since thin chains have many far strikes with no bid even when open.
+nm = lambda df: df[(df.strike > spot * 0.7) & (df.strike < spot * 1.3)]
+live = sum(int((nm(C).bid > 0).sum() + (nm(P).bid > 0).sum()) for C, P in chains.values())
+total = sum(len(nm(C)) + len(nm(P)) for C, P in chains.values())
 mode = 'mid' if live > 0.5 * total else 'last'
 if mode == 'mid':   # live quotes: time-stamp at the actual pull time, not the 16:00 close
     now = pd.Timestamp.now(tz='America/New_York').floor('min').tz_localize(None).to_pydatetime()
@@ -75,7 +80,7 @@ pickle.dump(chains, open('chains.pkl', 'wb'))
 # ---- earnings calendar: past reports (for reaction history) and the next one (for the jump) ----
 from earn import BASE_PAST, reaction_open
 NOWX = pd.Timestamp(now).to_pydatetime()
-cal = {d: 'amc' for d in BASE_PAST}
+cal = {d: 'amc' for d in BASE_PAST.get(SYM, [])}
 upcoming = []
 try:
     ed = tk.get_earnings_dates(limit=40)
@@ -97,7 +102,22 @@ for iso, timing in sorted(cal.items()):
 nxt = upcoming[0] if upcoming and (upcoming[0][2] - NOWX).days <= 120 else None
 print("next earnings:", (nxt[0] + ' ' + nxt[1]) if nxt else 'none within 120 days', "| past reports:", len(past))
 
-run = dict(spot=round(spot, 2), prev=round(prev, 2), now=now.isoformat(), rf=RF, div=DIV,
+# ---- analyst expectations (consensus revenue/EPS, price targets) ----
+est = {}
+try:
+    for key, attr in (('rev', 'revenue_estimate'), ('eps', 'earnings_estimate')):
+        df = getattr(tk, attr)
+        if df is not None and len(df):
+            est[key] = {str(i): {k: (float(df.loc[i, k]) if k in df.columns and pd.notna(df.loc[i, k]) else None)
+                                 for k in ('avg', 'low', 'high', 'numberOfAnalysts', 'yearAgoRevenue', 'yearAgoEps', 'growth')}
+                        for i in df.index}
+    pt = tk.analyst_price_targets
+    if isinstance(pt, dict): est['pt'] = {k: float(v) for k, v in pt.items() if isinstance(v, (int, float))}
+except Exception as ex:
+    print("analyst estimates unavailable:", ex)
+
+run = dict(sym=SYM, spot=round(spot, 2), prev=round(prev, 2), now=now.isoformat(), rf=RF, div=round(DIV, 5), est=est,
+           beta=info.get('beta'), name=info.get('longName') or info.get('shortName'),
            earn_next=nxt[0] if nxt else None, earn_timing=nxt[1] if nxt else None,
            earn_open=nxt[2].isoformat(timespec='minutes') if nxt else None,
            earn_past=[[d, t] for d, t, _ in past],

@@ -96,9 +96,8 @@ for name,d in HOR:
         p75=round(Q(.75),1),p90=round(Q(.90),1),p95=round(Q(.95),1),
         mean=round(mean,1),mode=round(mode,1),
         exp_move_pct=round((Q(.8413)-Q(.1587))/2/SPOT*100,2),
-        P_up=round(pr(SPOT,1e9)*100,1), P_lt_290=round(pr(0,LOW52)*100,1),
-        P_gt_350=round(pr(350,1e9)*100,1), P_gt_400=round(pr(400,1e9)*100,1),
-        P_lt_250=round(pr(0,250)*100,1), P_lt_200=round(pr(0,200)*100,1))
+        P_up=round(pr(SPOT,1e9)*100,1), P_dn15=round(pr(0,SPOT*0.85)*100,1), P_up15=round(pr(SPOT*1.15,1e9)*100,1),
+        P_dn30=round(pr(0,SPOT*0.70)*100,1), P_up30=round(pr(SPOT*1.30,1e9)*100,1))
     out.append(row); dens[name]=(Ks,q,cdf,Tstar,F)
 
 df=pd.DataFrame(out)
@@ -106,5 +105,5 @@ pd.set_option('display.width',250)
 print("\n=== RISK-NEUTRAL QUANTILES (spot %.2f) ==="%SPOT)
 print(df[['horizon','date','dte','fwd','atm_iv','p05','p10','p25','median','p75','p90','p95','mean','mode','exp_move_pct']].to_string(index=False))
 print("\n=== PROBABILITIES (%) ===")
-print(df[['horizon','P_up','P_lt_290','P_lt_250','P_lt_200','P_gt_350','P_gt_400']].to_string(index=False))
+print(df[['horizon','P_up','P_dn15','P_up15','P_dn30','P_up30']].to_string(index=False))
 pickle.dump(dens,open('dens.pkl','wb')); df.to_csv('forecast.csv',index=False)

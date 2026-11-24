@@ -3,6 +3,9 @@
 import json, datetime as dt
 
 _c = json.load(open('run.json'))
+SYM    = _c.get('sym', 'AVGO')
+import os as _os
+CONF   = next((t for t in json.load(open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)), 'tickers.json'))) if t['sym'] == SYM), {})
 SPOT   = float(_c['spot'])                                  # underlying close used as "now"
 PREV   = float(_c['prev'])                                  # prior session close
 NOW    = dt.datetime.fromisoformat(_c['now'])               # ET timestamp of the snapshot

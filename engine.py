@@ -1,7 +1,7 @@
 import pickle, numpy as np, pandas as pd, datetime as dt
 from scipy.stats import norm
 from scipy.optimize import brentq, least_squares
-import json, warnings
+import json, sys, warnings
 warnings.filterwarnings('ignore')
 
 from cfg import SPOT, NOW, RF, DIV, PRICE_MODE
@@ -29,6 +29,9 @@ def mid(df):
 
 rows=[]
 surface={}
+# Thin chains (few listed expirations): accept wider quotes and fewer strikes per expiry, and say so on the page.
+THIN=len(chains)<8
+MAX_SPREAD=3.0 if THIN else 1.5; MIN_PTS=4 if THIN else 6
 for exp,(C,P) in chains.items():
     ed=dt.datetime.strptime(exp,'%Y-%m-%d').replace(hour=16)
     T=(ed-NOW).total_seconds()/(365.25*86400)
@@ -63,14 +66,14 @@ for exp,(C,P) in chains.items():
         else:
             px,isc=r['mid_p'],False; oi=r['openInterest_p']; sp=r['ask_p']-r['bid_p']
         if px<=0.03: continue
-        if sp>0 and sp/px>1.5: continue
+        if sp>0 and sp/px>MAX_SPREAD: continue
         s=iv_fwd(px,F,Kx,T,D,isc)
         if not np.isfinite(s) or s<0.05 or s>3.5: continue
         k=np.log(Kx/F)
         if abs(k)>0.85: continue
         vg=D*F*norm.pdf((k+0.5*s*s*T)/(s*np.sqrt(T)))*np.sqrt(T)
         ks.append(k); ivs.append(s); wts.append(max(vg,1e-6)*(1+np.log1p(np.nan_to_num(oi))))
-    if len(ks)<6: continue
+    if len(ks)<MIN_PTS: continue
     ks=np.array(ks); ivs=np.array(ivs); wts=np.array(wts)
     o=np.argsort(ks); ks,ivs,wts=ks[o],ivs[o],wts[o]
     # ATM iv = interp at k=0
@@ -81,6 +84,8 @@ for exp,(C,P) in chains.items():
                      n=len(ks),oi_c=int(C['openInterest'].fillna(0).sum()),oi_p=int(P['openInterest'].fillna(0).sum()),
                      vol_c=int(C['volume'].fillna(0).sum()),vol_p=int(P['volume'].fillna(0).sum())))
 
+if len(rows)<3:
+    sys.exit(f"STOP: only {len(rows)} of {len(chains)} expirations have enough quoted strikes to price. Options data is too sparse for this report yet.")
 tt=pd.DataFrame(rows).sort_values('dte')
 print("=== TERM STRUCTURE (spot %.2f, r=%.3f%%) ==="%(SPOT,RF*100))
 print(tt.to_string(index=False))

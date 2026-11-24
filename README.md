@@ -1,11 +1,12 @@
-# AVGO options outlook
+# Options outlooks
 
-A daily, options-implied forecast for Broadcom (AVGO) at 7, 10, 20, 30 and 45 days, rebuilt from a fresh options chain
-every trading day and published to GitHub Pages.
+Daily, options-implied forecasts at 7, 10, 20, 30 and 45 days for the tickers in `tickers.json` (Broadcom, Nvidia,
+TSMC, Anthropic, SpaceX, Neurogene), rebuilt from fresh options chains every trading day and published to GitHub Pages
+with an overview page and a menu linking the reports.
 
-- **Live page:** https://kkrisc.github.io/avgo-report/
-- **Refresh from a phone:** GitHub app → this repo → Actions → *Refresh AVGO report* → Run workflow. Reload the page after
-  about five minutes. Leave "allow last trades" off unless the market is closed and you want a lower-quality build anyway.
+- **Live site:** https://kkrisc.github.io/avgo-report/ (overview) · one report per ticker at `/<ticker>/`, e.g. `/avgo/`
+- **Refresh from a phone:** GitHub app → this repo → Actions → *Refresh options reports* → Run workflow. Reload after
+  about ten minutes. Leave "allow last trades" off unless the market is closed and you want a lower-quality build anyway.
 - **Automatic refresh:** weekdays at 15:47 UTC (10:47 New York in winter, 11:47 in summer). If there are no live quotes
   (holiday, outage), the run skips publishing and the previous page stays up.
 
@@ -13,7 +14,9 @@ Educational analysis, not investment advice.
 
 ## How it works
 
-`run.sh` runs the pipeline in `work/` and writes `site/index.html` plus `site/data.json`:
+`run_all.sh` fetches AI-spending data once (`capex.py`), runs `run.sh` for each ticker (in `work/<TICKER>/`, writing
+`site/<ticker>/index.html`, `data.json`, `summary.json`), then builds the overview (`build_hub.py`). A ticker whose run
+fails keeps yesterday's page; one that has never built shows the reason on the overview. Per-ticker steps:
 
 | Step | Script | What it does |
 |---|---|---|
@@ -31,19 +34,23 @@ Each run downloads the live `data.json` to compare with the previous edition and
 If that download fails for any reason other than "not published yet", the run stops so the history is never reset.
 `history_seed.json` holds the first two editions (20 and 23 Nov 2026).
 
-## Hand-written inputs
+## Configuration and hand-written inputs
 
-Everything on the page is computed from market data except two files, which only change when edited:
+- `tickers.json`: one entry per report (name, title, peers, benchmark, history start, whether to show AI spending).
+  Adding a ticker here adds its report and menu item.
+- `notes/<TICKER>.json`: dated context notes, shown newest first.
+- `scenarios/<TICKER>.json`: an earnings scenario tree tied to one report date; it appears only while that report is ahead.
+- `seeds/<TICKER>.json`: optional starting history (Broadcom's first two editions).
 
-- `notes.json`: dated context notes (news, interpretation). Shown newest first.
-- `scenarios.json`: the earnings scenario tree. It is tied to one report date and only appears while that report is
-  still ahead. After it passes, the page shows a placeholder until a new tree is written.
+Thin data is handled openly: few listed expirations, a short trading history or no earnings history each add a
+"Read with care" notice, and a chain too sparse to price at all shows the reason on the overview instead of a report.
 
 ## Run locally
 
 ```bash
 uv venv --python 3.14 .venv && uv pip sync --require-hashes --python .venv/bin/python requirements.txt
-PYTHON=.venv/bin/python ./run.sh site/index.html && open site/index.html
+PYTHON=.venv/bin/python ./run_all.sh site && open site/index.html          # everything
+SYM=NVDA PYTHON=.venv/bin/python ./run.sh site/nvda/index.html                # one ticker
 ```
 
 ## Security

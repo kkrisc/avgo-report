@@ -1,5 +1,16 @@
 [
   {
+    "date": "2026-11-24",
+    "title": "AI spending: what Broadcom's AI revenue depends on",
+    "paras": [
+      "Broadcom's AI revenue comes from two lines: custom accelerators (XPUs) designed with a handful of hyperscalers, with Google's TPU the largest, and the networking chips (Tomahawk switches, Jericho routers) that connect AI clusters. Both depend on the capital budgets of the same few buyers, which makes <strong>customer concentration</strong> the central risk.",
+      "In the third quarter of 2026 the five largest US buyers spent about $230B on capex, more than double a year earlier and more than their combined operating cash flow. Spending at that pace depends on profits continuing to grow and on debt markets staying open. The AI-spending section above refreshes these figures as each buyer reports.",
+      "Share can shift even while budgets grow. The 20 November report described Google moving part of its 2027 TPU volume from Broadcom's 8i to MediaTek's 8t. Google's budget stayed intact and Broadcom's slice got smaller. The 9 December guidance, against management's earlier pointer of about $115B of FY2027 AI revenue, will show how much of that shift is already in the numbers.",
+      "Broadcom also has direct exposure to AI-lab finances through a lending commitment to Anthropic and an equity stake taken at Anthropic's November 2026 IPO. Stress at a large AI lab would reach Broadcom through credit exposure as well as through orders.",
+      "Analyst consensus still expects revenue to grow about 65% next fiscal year. The page tracks that number edition by edition. Cuts after 9 December would be the clearest sign that the TPU shift or spending fatigue is reaching the estimates."
+    ]
+  },
+  {
     "date": "2026-11-23",
     "title": "Nvidia reinstates Jensen Huang; the sector bounces and Broadcom lags",
     "paras": [
