@@ -1,0 +1,651 @@
+<title>Pricing the Broadcom Drop</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=Archivo:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: one reading column for prose, full-width figures and tables; charts redraw at their real width. */
+:root{
+  color-scheme: light;
+  --paper:#E9EDF2; --surface:#FBFCFD; --surface-2:#F1F4F8; --sunk:#E2E7EE;
+  --ink:#121821; --ink-2:#3E4A5A; --muted:#6F7B87; --rule:#D2D9E2; --rule-soft:#E3E8EF;
+  --accent:#A66A12; --accent-ink:#8A5710; --accent-wash:rgba(166,106,18,.10); --accent-line:rgba(166,106,18,.34);
+  --blue:#2A78D6; --b50:rgba(42,120,214,.30); --b80:rgba(42,120,214,.095);
+  --teal:#0A8F78; --red:#D13F3E; --on-accent:#FFFFFF;
+  --shadow:0 1px 2px rgba(18,24,33,.05),0 6px 20px -8px rgba(18,24,33,.10);
+  --f-disp:"Spectral","Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --f-body:"Archivo",-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,"Helvetica Neue",Arial,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){
+  color-scheme: dark;
+  --paper:#0D1117; --surface:#151B24; --surface-2:#1B222D; --sunk:#10161E;
+  --ink:#E8EEF5; --ink-2:#A7B3C1; --muted:#7D8A97; --rule:#293441; --rule-soft:#202935;
+  --accent:#C9882F; --accent-ink:#E3AC61; --accent-wash:rgba(201,136,47,.13); --accent-line:rgba(201,136,47,.40);
+  --blue:#4F96E8; --b50:rgba(79,150,232,.34); --b80:rgba(79,150,232,.105);
+  --teal:#27A888; --red:#E66767; --on-accent:#10161E;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -10px rgba(0,0,0,.6);
+}}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --paper:#0D1117; --surface:#151B24; --surface-2:#1B222D; --sunk:#10161E;
+  --ink:#E8EEF5; --ink-2:#A7B3C1; --muted:#7D8A97; --rule:#293441; --rule-soft:#202935;
+  --accent:#C9882F; --accent-ink:#E3AC61; --accent-wash:rgba(201,136,47,.13); --accent-line:rgba(201,136,47,.40);
+  --blue:#4F96E8; --b50:rgba(79,150,232,.34); --b80:rgba(79,150,232,.105);
+  --teal:#27A888; --red:#E66767; --on-accent:#10161E;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -10px rgba(0,0,0,.6);
+}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15.5px;line-height:1.62;
+     -webkit-font-smoothing:antialiased;padding-block:0 80px;
+     padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+.wrap{max-width:1000px;margin:0 auto}
+.col{max-width:710px}
+h1,h2,h3{font-family:var(--f-disp);font-weight:600;text-wrap:balance;margin:0}
+a{color:var(--accent-ink)}
+
+header{padding:48px 0 0}
+.eyebrow{font-family:var(--f-mono);font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);
+         display:flex;gap:8px 10px;flex-wrap:wrap;align-items:center}
+.eyebrow .dot{width:4px;height:4px;border-radius:50%;background:var(--accent);display:inline-block}
+.chip{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent-ink);
+      border:1px solid var(--accent-line);background:var(--accent-wash);border-radius:3px;padding:2px 7px}
+h1{font-size:clamp(36px,6.2vw,62px);line-height:1.03;letter-spacing:-.022em;margin:16px 0 0}
+.standfirst{font-family:var(--f-disp);font-size:clamp(17.5px,2.3vw,19.5px);line-height:1.56;color:var(--ink-2);margin:20px 0 0;max-width:660px}
+.standfirst em{color:var(--ink);font-style:italic}
+
+.tape{margin:34px 0 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);
+      display:grid;grid-template-columns:repeat(5,minmax(0,1fr));background:var(--surface);border-radius:3px}
+.cell{padding:15px 18px;border-right:1px solid var(--rule-soft);min-width:0}
+.cell:last-child{border-right:0}
+.cell .k{font-family:var(--f-mono);font-size:10px;letter-spacing:.11em;text-transform:uppercase;color:var(--muted)}
+.cell .v{font-family:var(--f-mono);font-size:25px;font-weight:500;letter-spacing:-.02em;margin-top:5px;line-height:1.1;font-variant-numeric:tabular-nums}
+.cell .s{font-size:12px;color:var(--muted);margin-top:3px}
+.dn{color:var(--red)} .up{color:var(--teal)}
+.sparkband{background:var(--surface);border-bottom:1px solid var(--rule);border-radius:0 0 3px 3px}
+
+section{margin:56px 0 0}
+.kicker{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent-ink);
+        display:flex;align-items:center;gap:9px;margin-bottom:12px}
+.kicker::after{content:"";flex:1;height:1px;background:var(--rule)}
+h2{font-size:clamp(25px,3.4vw,33px);letter-spacing:-.016em;line-height:1.14}
+h3{font-size:18.5px;letter-spacing:-.01em;margin:30px 0 8px}
+p{margin:14px 0}
+.lede{font-size:17px;color:var(--ink-2)}
+strong{font-weight:600;color:var(--ink)}
+
+figure{margin:26px 0 0;background:var(--surface);border:1px solid var(--rule);border-radius:4px;box-shadow:var(--shadow);overflow:hidden}
+figcaption{padding:13px 20px 15px;border-top:1px solid var(--rule-soft);background:var(--surface-2);
+           font-size:13px;line-height:1.55;color:var(--ink-2)}
+figcaption b{color:var(--ink);font-weight:600}
+.figtitle{padding:17px 20px 4px;font-family:var(--f-disp);font-size:17px;font-weight:600;letter-spacing:-.008em}
+.figsub{padding:0 20px 8px;font-size:12.5px;color:var(--muted);font-family:var(--f-mono)}
+.chartbox{padding:4px 12px 12px}
+.chart{width:100%;min-height:120px}
+.chart .empty{padding:28px 8px;color:var(--muted);font-size:13px}
+svg{display:block;max-width:100%;height:auto}
+.legend{display:flex;gap:8px 18px;flex-wrap:wrap;padding:0 20px 14px;font-size:12.5px;color:var(--ink-2);align-items:center}
+.lg{display:inline-flex;align-items:center;gap:7px}
+.sw{width:15px;height:9px;border-radius:2px;flex:none}
+.swl{width:18px;height:0;flex:none;border-top:2px solid var(--blue)}
+.swl.acc{border-top-color:var(--accent)} .swl.dash{border-top-style:dashed}
+.swl.mut{border-top-color:var(--muted)} .swl.ink{border-top-color:var(--ink-2)}
+
+#tip{position:fixed;z-index:20;pointer-events:none;max-width:260px;background:var(--surface);color:var(--ink);
+     border:1px solid var(--rule);border-radius:4px;box-shadow:var(--shadow);padding:8px 11px;
+     font-family:var(--f-mono);font-size:12px;line-height:1.5;font-variant-numeric:tabular-nums}
+#tip b{font-family:var(--f-body);font-weight:600;display:block;margin-bottom:2px}
+#tip div{white-space:nowrap}
+#tip .m{color:var(--muted)}
+
+.tbl{width:100%;overflow-x:auto;margin:24px 0 0;background:var(--surface);border:1px solid var(--rule);
+     border-radius:4px;box-shadow:var(--shadow)}
+table{border-collapse:collapse;width:100%;font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:13.5px}
+th{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:500;text-align:right;
+   padding:13px 13px 9px;border-bottom:1px solid var(--rule);white-space:nowrap}
+th:first-child,td:first-child{text-align:left;padding-left:19px}
+th:last-child,td:last-child{padding-right:19px}
+td{padding:11px 13px;border-bottom:1px solid var(--rule-soft);text-align:right;white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover{background:var(--surface-2)}
+td.lbl{font-family:var(--f-body);font-weight:500;color:var(--ink)}
+td.mid{color:var(--ink);font-weight:600;font-size:15px}
+td.was{color:var(--muted)}
+.tbl.fit td.lbl{white-space:normal;min-width:130px}
+.band{color:var(--ink-2)}
+caption{caption-side:top;text-align:left;padding:16px 19px 4px;font-family:var(--f-disp);font-size:17px;font-weight:600}
+.tnote{padding:12px 19px 15px;border-top:1px solid var(--rule-soft);background:var(--surface-2);font-family:var(--f-body);
+       font-size:12.5px;color:var(--ink-2);line-height:1.55;white-space:normal}
+.tnote b{color:var(--ink)}
+
+.call{margin:28px 0 0;border-left:2.5px solid var(--accent);background:var(--accent-wash);padding:16px 20px;border-radius:0 4px 4px 0}
+.call p{margin:0} .call p + p{margin-top:10px}
+.call .ct{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-ink);margin-bottom:7px}
+
+.finds{list-style:none;padding:0;margin:22px 0 0;display:grid;gap:14px}
+.finds li{margin:0;padding:0 0 0 16px;border-left:2px solid var(--rule)}
+
+.scen{margin:26px 0 0;display:flex;flex-direction:column;gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:4px;overflow:hidden}
+.srow{background:var(--surface);padding:14px 18px;display:grid;grid-template-columns:52px minmax(0,1fr) 92px 82px;gap:14px;align-items:center}
+.srow.tot{background:var(--surface-2)}
+.sp{font-family:var(--f-mono);font-size:16px;font-weight:600;color:var(--ink)}
+.sbar{height:3px;background:var(--rule);border-radius:2px;margin-top:5px;overflow:hidden}
+.sbar i{display:block;height:100%;background:var(--accent);border-radius:2px}
+.sl{font-size:13.5px;line-height:1.45;color:var(--ink-2)}
+.sl b{color:var(--ink);font-weight:600;display:block;font-family:var(--f-body);font-size:14px}
+.smv{text-align:right;font-family:var(--f-mono);font-size:15px;font-weight:600}
+.spx{text-align:right;font-family:var(--f-mono);font-size:14px;color:var(--ink-2)}
+
+.note{margin:22px 0 0;padding:0 0 0 16px;border-left:2px solid var(--rule)}
+.note .nd{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--muted)}
+.note h3{margin:4px 0 6px;font-size:17.5px}
+.note p{margin:8px 0;font-size:14.5px;color:var(--ink-2)}
+
+ul{padding-left:19px;margin:14px 0} li{margin:9px 0}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px;margin-top:24px}
+.minicard{background:var(--surface);border:1px solid var(--rule);border-radius:4px;padding:16px 18px;box-shadow:var(--shadow)}
+.minicard .mt{font-family:var(--f-mono);font-size:10px;letter-spacing:.11em;text-transform:uppercase;color:var(--muted)}
+.minicard .mv{font-family:var(--f-mono);font-size:22px;font-weight:500;margin-top:6px;letter-spacing:-.02em}
+.minicard .md{font-size:12.5px;color:var(--ink-2);margin-top:7px;line-height:1.5}
+footer{margin:64px 0 0;padding-top:22px;border-top:1px solid var(--rule);font-size:12.5px;color:var(--muted);line-height:1.6}
+@media (max-width:860px){
+  .tape{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .cell{border-bottom:1px solid var(--rule-soft)}
+  .cell:nth-child(2n){border-right:0}
+  .cell:last-child{grid-column:1/-1;border-bottom:0}
+  .grid2{grid-template-columns:minmax(0,1fr)}
+  .srow{grid-template-columns:46px minmax(0,1fr) 70px;row-gap:4px;gap:12px;padding:13px 14px}
+  .spx{grid-column:3;text-align:right}
+}
+@media (max-width:560px){
+  header{padding-top:32px}
+  .cell{padding:12px 14px} .cell .v{font-size:22px}
+  table{font-size:12.5px}
+  th{padding:11px 9px 8px} td{padding:9px 9px}
+  th:first-child,td:first-child{padding-left:14px}
+  th:last-child,td:last-child{padding-right:14px}
+  td.mid{font-size:14px}
+  .figtitle{padding:15px 14px 3px} .figsub{padding:0 14px 8px} .legend{padding:0 14px 12px}
+  figcaption{padding:12px 14px 14px} .chartbox{padding:2px 6px 10px}
+  caption{padding:14px 14px 4px} .tnote{padding:11px 14px 13px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div id="tip" hidden></div>
+<div class="wrap">
+<header>
+  <div class="eyebrow"><span class="dot"></span><span>Options-implied analysis</span><span>·</span><span>AVGO · Nasdaq</span><span>·</span><span>{{asof}}</span><span class="chip">{{chip}}</span></div>
+  <h1>Pricing the Broadcom Drop</h1>
+  <p class="standfirst">{{standfirst}}</p>
+</header>
+
+<div class="tape">
+  <div class="cell"><div class="k">Last</div><div class="v">{{spot}}</div><div class="s">{{chg_txt}}</div></div>
+  <div class="cell"><div class="k">5 sessions</div><div class="v {{ch5_cls}}">{{ch5}}%</div><div class="s">{{ch5_sub}}</div></div>
+  <div class="cell"><div class="k">30-day ATM IV</div><div class="v">{{iv30}}%</div><div class="s">{{iv30_sub}}</div></div>
+  <div class="cell"><div class="k">To earnings</div><div class="v">{{dte_earn}}</div><div class="s">{{earn_sub}}</div></div>
+  <div class="cell"><div class="k">From 52w high</div><div class="v dn">−{{from_high}}%</div><div class="s">high {{high52}} · low {{low52}}</div></div>
+</div>
+<div class="sparkband"><div id="c-spark"></div></div>
+
+<div class="col">
+<section>
+  <div class="kicker">The answer</div>
+  <h2>Five horizons, five distributions</h2>
+  <p class="lede">A point prediction would be false precision. At {{iv30}}% implied volatility the useful output is a range with probabilities attached. These are central estimates with the bands the market's own pricing implies, adjusted to a real-world measure.</p>
+</section>
+</div>
+
+<div class="tbl">
+  <table>
+    <caption>Forecast, real-world measure · from {{spot}}</caption>
+    <thead><tr><th>Horizon</th><th>Date</th><th>Central</th><th>50% band</th><th>80% band</th><th>P(up)</th><th>P(&lt;{{low_lbl}})</th><th>P(&gt;350)</th></tr></thead>
+    <tbody>
+{{ROWS_FORECAST}}
+    </tbody>
+  </table>
+  <div class="tnote"><b>Read this as:</b> at 45 days there is a 50% chance AVGO sits between ${{b45_lo}} and ${{b45_hi}}, a ${{b45_w}} window. The central estimate barely moves across the horizons because the market prices almost no directional drift. What grows is the width. {{fc_earn}}</div>
+</div>
+
+<div class="col">
+<section>
+  <div class="kicker">What changed</div>
+  <h2>Since the last edition</h2>
+  <p>This page is rebuilt from a fresh options chain every trading day. The table compares today's reading with earlier editions.</p>
+</section>
+</div>
+
+<div class="tbl fit">
+  <table>
+    <caption>Key readings by edition</caption>
+    <thead><tr><th>Measure</th>{{CMP_HEAD}}</tr></thead>
+    <tbody>
+{{ROWS_COMPARE}}
+    </tbody>
+  </table>
+</div>
+
+<div class="col">
+<ul class="finds">
+{{FINDINGS}}
+</ul>
+</div>
+
+<figure>
+  <div class="figtitle">How the outlook has moved</div>
+  <div class="figsub">One point per edition · the band is the 45-day real-world 50% range</div>
+  <div class="chartbox"><div class="chart" id="c-hist"></div></div>
+  <div class="legend">
+    <span class="lg"><span class="swl ink"></span>Spot at each edition</span>
+    <span class="lg"><span class="swl"></span>45-day central estimate</span>
+    <span class="lg"><span class="sw" style="background:var(--b50)"></span>45-day 50% band</span>
+  </div>
+  <figcaption>{{hist_caption}}</figcaption>
+</figure>
+
+<div class="col">
+<section>
+  <div class="kicker">Cross-complex</div>
+  <h2>Broadcom against the chip complex</h2>
+  <p>Broadcom trades as part of the AI-semiconductor group. Comparing it with Nvidia, AMD, the semiconductor ETF (SMH) and the Nasdaq-100 (QQQ) separates moves that are about Broadcom from moves that are about the group.</p>
+</section>
+</div>
+
+<figure>
+  <div class="figtitle">Change over the last five sessions</div>
+  <div class="figsub">Through {{cx_last}}</div>
+  <div class="chartbox"><div class="chart" id="c-complex"></div></div>
+  <figcaption>{{cx_caption}}</figcaption>
+</figure>
+
+<div class="tbl">
+  <table>
+    <caption>Daily moves, last five sessions</caption>
+    <thead><tr><th>Session</th><th>AVGO</th><th>NVDA</th><th>AMD</th><th>SMH</th><th>QQQ</th></tr></thead>
+    <tbody>
+{{ROWS_DAILY}}
+    </tbody>
+  </table>
+  <div class="tnote">{{corr_note}}</div>
+</div>
+
+<div class="col">
+<section>
+  <div class="kicker">First, the futures question</div>
+  <h2>There are no Broadcom futures</h2>
+  <p>Single-stock futures haven't traded in the US since OneChicago closed in 2020, so there is no AVGO futures contract to pull. The <strong>implied forward</strong> embedded in the options chain does the same job. For every expiration, put-call parity pins the price at which the market will transact AVGO on that date.</p>
+</section>
+</div>
+
+<div class="tbl">
+  <table>
+    <caption>Implied forward curve</caption>
+    <thead><tr><th>Expiry</th>{{FWD_HEAD}}</tr></thead>
+    <tbody>
+      <tr><td class="lbl">Forward</td>{{FWD_ROW}}</tr>
+      <tr><td class="lbl">Days out</td>{{FWD_DAYS}}</tr>
+    </tbody>
+  </table>
+  <div class="tnote">The curve rises at roughly <b>{{carry}}% a year</b>, which is the 4.12% risk-free rate minus Broadcom's 0.75% dividend yield. That is pure cost of carry. <b>The forward curve contains no forecast.</b> It is an arbitrage relationship, and an upward slope reflects an interest rate rather than a view. The forecast lives in implied volatility.{{fwd_note}}</div>
+</div>
+
+<div class="col">
+<section>
+  <div class="kicker">The instrument</div>
+  <h2>{{term_h2}}</h2>
+  <p>Implied volatility by expiration is the most informative object in this chain. Read left to right, it shows how quickly the market expects current volatility to fade{{term_intro_event}}. The dashed line is the previous edition's curve, placed on today's calendar so the same expirations line up.</p>
+</section>
+</div>
+
+<figure>
+  <div class="figtitle">At-the-money implied volatility by expiration</div>
+  <div class="figsub">{{n_exp}} expirations · log time axis · days from {{asof_short}}</div>
+  <div class="chartbox"><div class="chart" id="c-term"></div></div>
+  <div class="legend">
+    <span class="lg"><span class="swl acc"></span>{{asof_short}}</span>
+    <span class="lg"{{prev_hidden}}><span class="swl mut dash"></span>{{prev_label}}</span>
+  </div>
+  <figcaption>{{term_caption}} Expirations further out settle toward a {{lr}}% long-run level.</figcaption>
+</figure>
+
+<div class="col">
+<section>
+  <p>Fitting a variance model to all {{n_exp}} points, with a mean-reverting diffusive part plus a one-day jump on the next earnings date, splits the curve in two:</p>
+</section>
+<div class="grid2">
+  <div class="minicard"><div class="mt">Diffusive volatility</div><div class="mv">{{dv7}}% → {{lr}}%</div><div class="md">Average diffusive volatility over the next seven days is {{dv7}}%, decaying toward a {{lr}}% long-run level.</div></div>
+  {{EVENT_CARD}}
+</div>
+<section>
+  <p>Beyond the first week the model fits within {{fit_err}} volatility points. {{market_position}}</p>
+</section>
+
+<section>
+  <div class="kicker">The test</div>
+  <h2>{{earn_h2}}</h2>
+  <p>An implied move is only expensive or cheap relative to what this stock does on earnings day. Broadcom's record splits sharply by era.</p>
+</section>
+</div>
+
+<figure>
+  <div class="figtitle">Next-session move after each earnings report</div>
+  <div class="figsub">Last {{n_earn_shown}} reports · move measured on the first session that traded on the news</div>
+  <div class="chartbox"><div class="chart" id="c-earn"></div></div>
+  <div class="legend">
+    <span class="lg"><span class="sw" style="background:var(--teal)"></span>Gain</span>
+    <span class="lg"><span class="sw" style="background:var(--red)"></span>Loss</span>
+    <span class="lg"{{band_hidden}}><span class="sw" style="background:var(--accent-wash);border:1px solid var(--accent-line)"></span>Currently implied ±{{J1}}%</span>
+  </div>
+  <figcaption>{{earn_caption}}</figcaption>
+</figure>
+
+<div class="col">
+{{FINDING_CALL}}
+</div>
+
+<div class="col">
+<section>
+  <div class="kicker">The forecast</div>
+  <h2>Where the distribution goes</h2>
+  <p>From the smoothed volatility smile at each expiration I recover the full risk-neutral density by Breeden–Litzenberger, the second derivative of call price with respect to strike. Interpolating across expirations in variance time puts the earnings jump on the right date. That gives a complete probability distribution at any horizon.</p>
+</section>
+</div>
+
+<figure>
+  <div class="figtitle">Forecast cone, {{d0}} → {{d45}}</div>
+  <div class="figsub">Real-world measure · bands are 50% and 80% confidence</div>
+  <div class="chartbox"><div class="chart" id="c-fan"></div></div>
+  <div class="legend">
+    <span class="lg"><span class="sw" style="background:var(--b50)"></span>50% confidence</span>
+    <span class="lg"><span class="sw" style="background:var(--b80)"></span>80% confidence</span>
+    <span class="lg"><span class="swl"></span>Central estimate</span>
+    <span class="lg"><span class="swl acc dash"></span>Market-implied 5% / 95%</span>
+  </div>
+  <figcaption>The cone barely tilts because the market prices almost <b>no drift</b>. What it prices is dispersion. {{fan_earn}}The dashed lines are the raw market-implied 5% and 95% levels. The solid bands are real-world ranges after the volatility adjustment described below.</figcaption>
+</figure>
+
+<div class="col">
+<section>
+  <h3>Why the two measures differ</h3>
+  <p>The risk-neutral distribution read straight off option prices is <em>not</em> a forecast. It is drift-free by construction, and it is usually too wide because investors pay a premium for protection. Turning it into a real-world forecast takes two adjustments.</p>
+  <p><strong>Volatility adjustment.</strong> {{calib_text}}</p>
+  <p><strong>Drift.</strong> A 4.12% risk-free rate plus Broadcom's 1.51 beta against a 4.5% equity risk premium gives 10.9% a year, about 0.9% a month. Over 45 days that is ${{drift45}} on a ${{spot0}} stock, which is why the central estimate hardly moves. <strong>At this volatility, drift is noise.</strong></p>
+</section>
+</div>
+
+<div class="tbl">
+  <table>
+    <caption>Both measures, side by side</caption>
+    <thead><tr><th>Horizon</th><th>ATM IV</th><th colspan="3" style="text-align:right">Risk-neutral (market-implied)</th><th colspan="3" style="text-align:right">Real-world (forecast)</th></tr>
+    <tr><th></th><th></th><th>5%</th><th>Median</th><th>95%</th><th>10%</th><th>Median</th><th>90%</th></tr></thead>
+    <tbody>
+{{ROWS_BOTH}}
+    </tbody>
+  </table>
+  <div class="tnote">{{both_note}}</div>
+</div>
+
+{{SCENARIO_SECTION}}
+
+<div class="col">
+<section>
+  <div class="kicker">Positioning</div>
+  <h2>Where the open interest sits</h2>
+  {{POS_PROSE}}
+</section>
+</div>
+{{POS_TABLE}}
+
+<div class="col">
+<section>
+  <div class="kicker">Context</div>
+  <h2>Notes on recent events</h2>
+  <p>These notes are written by hand and dated. Everything above them refreshes automatically from market data each trading day; the notes change only when they are rewritten.</p>
+{{NOTES}}
+</section>
+
+<section>
+  <div class="kicker">Limits</div>
+  <h2>What this cannot tell you</h2>
+  <ul>
+    <li><strong>The distribution is conditional on one moment.</strong> It prices the information in the market at {{asof}}. A new analyst note, a hyperscaler capex revision or a company pre-announcement would invalidate it immediately.</li>
+    <li><strong>The volatility adjustment is estimated.</strong> It comes from past days in a similar volatility regime, which overlap heavily. If the regime is changing, realized volatility can differ sharply from the estimate.</li>
+    {{SCEN_LIMIT}}
+    <li><strong>Fat tails are likely understated.</strong> The lognormal-with-skew form underweights a disorderly AI-complex unwind, in which correlations go to one.</li>
+    <li><strong>{{data_limit_head}}</strong> {{data_limit}}</li>
+    <li><strong>None of this is a recommendation.</strong> It describes what one market is charging for risk at one moment.</li>
+  </ul>
+</section>
+
+<section>
+  <div class="kicker">Method</div>
+  <h2>How this was built</h2>
+  <p>All {{n_exp}} listed expirations and {{n_contracts}} contracts pulled from Yahoo Finance. {{method_prices}} Forward and discount factor per expiration come from open-interest-weighted put-call parity on near-the-money strikes{{method_fwd}}. Implied volatilities are solved by Brent inversion of Black-76 against that forward, using the out-of-the-money side at every strike. An SVI smile is fitted per expiration, densities are recovered by Breeden–Litzenberger on the smoothed smile, and interpolation across expirations runs in cumulative-variance time so the earnings jump stays on its date. The next earnings date and past report dates come from Yahoo's earnings calendar. Realized volatility, earnings reactions and the volatility calibration use daily closes since 2019. Cross-complex moves and correlations use daily closes of NVDA, AMD, SMH and QQQ alongside AVGO.</p>
+</section>
+
+<footer>
+  <p><strong>Broadcom Inc. (AVGO)</strong> · Market data as of {{asof}} · Spot ${{spot}} · Market cap ${{mcap}}T · {{earn_footer}} · First edition: 20 Nov 2026</p>
+  <p style="margin-top:12px">Prepared as quantitative analysis, not investment advice. Options involve substantial risk of loss. The probabilities here come from market prices and historical data. They are estimates of likelihood, and the distribution of a single stock over 45 days is wide enough that any outcome inside these bands should be considered unsurprising.</p>
+</footer>
+</div>
+</div>
+
+<script>
+const D = {{DATA}};
+const NS = "http://www.w3.org/2000/svg";
+const el = (t,a={}) => { const n=document.createElementNS(NS,t); for(const k in a) n.setAttribute(k,a[k]); return n; };
+const tx = (s,x,y,str,o={}) => { const t=el("text",Object.assign({x,y,fill:"var(--muted)","font-family":"var(--f-mono)","font-size":11},o)); t.textContent=str; s.appendChild(t); return t; };
+const fmt = (v,d=1) => (v>0?"+":v<0?"−":"")+Math.abs(v).toFixed(d);
+
+/* ---------- tooltip (text only, never HTML) ---------- */
+const tip = document.getElementById("tip");
+let tipOwner = null;
+function placeTip(e){
+  const pad=14; let x=e.clientX+pad, y=e.clientY+pad;
+  const r=tip.getBoundingClientRect();
+  if(x+r.width>innerWidth-8) x=Math.max(8,e.clientX-r.width-pad);
+  if(y+r.height>innerHeight-8) y=Math.max(8,e.clientY-r.height-pad);
+  tip.style.left=x+"px"; tip.style.top=y+"px";
+}
+function fillTip(c){
+  tip.replaceChildren();
+  const b=document.createElement("b"); b.textContent=c.t; tip.appendChild(b);
+  c.l.forEach(line=>{ const d=document.createElement("div"); d.textContent=line; tip.appendChild(d); });
+  if(c.m){ const d=document.createElement("div"); d.className="m"; d.textContent=c.m; tip.appendChild(d); }
+}
+function hit(node,c,onIn,onOut){
+  node.addEventListener("pointerenter",e=>{ fillTip(c); tip.hidden=false; tipOwner=node; placeTip(e); onIn&&onIn(); });
+  node.addEventListener("pointermove",placeTip);
+  node.addEventListener("pointerleave",()=>{ if(tipOwner===node){ tip.hidden=true; tipOwner=null; } onOut&&onOut(); });
+}
+document.addEventListener("pointerdown",e=>{ if(tipOwner && !tipOwner.contains(e.target)){ tip.hidden=true; tipOwner=null; } });
+addEventListener("scroll",()=>{ tip.hidden=true; tipOwner=null; },{passive:true});
+
+function mk(id,hFn,label){
+  const box=document.getElementById(id); box.replaceChildren();
+  const W=Math.max(280,Math.round(box.clientWidth)); const H=hFn(W);
+  const s=el("svg",{viewBox:`0 0 ${W} ${H}`,width:W,height:H,role:"img","aria-label":label});
+  box.appendChild(s); return {s,W,H,narrow:W<560};
+}
+function empty(id,msg){ const box=document.getElementById(id); box.replaceChildren(); const d=document.createElement("div"); d.className="empty"; d.textContent=msg; box.appendChild(d); }
+const grid=(s,L,pw,y,lab,strong)=>{
+  s.appendChild(el("line",{x1:L,x2:L+pw,y1:y,y2:y,stroke:strong?"var(--rule)":"var(--rule-soft)","stroke-width":strong?1.4:1}));
+  tx(s,L-8,y+4,lab,{"text-anchor":"end"});
+};
+const tag=(s,x,y,label)=>{
+  const w=label.length*6.6+14;
+  s.appendChild(el("rect",{x:x-w/2,y:y,width:w,height:17,rx:2.5,fill:"var(--accent)"}));
+  tx(s,x,y+12.5,label,{"text-anchor":"middle",fill:"var(--on-accent)","font-size":10.5,"font-weight":600,"letter-spacing":".4"});
+};
+const fdate=(iso,yr)=>new Date(iso+"T12:00:00").toLocaleDateString("en-GB",Object.assign({day:"numeric",month:"short"},yr?{year:"2-digit"}:{}));
+
+/* ---------- sparkline ---------- */
+function drawSpark(){
+  const {s,W,H}=mk("c-spark",()=>62,"AVGO closing price over the last 90 sessions");
+  const h=D.hist, ps=h.map(d=>d.p), lo=Math.min(...ps), hi=Math.max(...ps), pad=(hi-lo)*0.18;
+  const x=i=>i/(h.length-1)*(W-10), y=v=>H-4-((v-(lo-pad))/((hi+pad)-(lo-pad)))*(H-10);
+  let dl="", da=`M 0 ${H}`;
+  h.forEach((d,i)=>{ const X=x(i),Y=y(d.p); dl+=(i?"L":"M")+X+" "+Y+" "; da+=`L ${X} ${Y} `; });
+  da+=`L ${x(h.length-1)} ${H} Z`;
+  s.appendChild(el("path",{d:da,fill:"var(--accent-wash)"}));
+  s.appendChild(el("path",{d:dl,fill:"none",stroke:"var(--accent)","stroke-width":1.4,"stroke-linejoin":"round"}));
+  s.appendChild(el("circle",{cx:x(h.length-1),cy:y(ps[ps.length-1]),r:3.5,fill:"var(--accent)",stroke:"var(--surface)","stroke-width":1.5}));
+  tx(s,14,17,"LAST 90 SESSIONS",{"font-size":10,"letter-spacing":"1.1"});
+  const bw=(W-10)/h.length;
+  h.forEach((d,i)=>{ const r=el("rect",{x:x(i)-bw/2,y:0,width:bw,height:H,fill:"transparent"}); s.appendChild(r);
+    hit(r,{t:d.d,l:["$"+d.p.toFixed(2)]}); });
+}
+
+/* ---------- edition history ---------- */
+function drawHistory(){
+  const E=D.history;
+  if(!E || E.length<2){ empty("c-hist","The history fills in as editions accumulate."); return; }
+  const {s,W,H,narrow}=mk("c-hist",w=>w<560?260:320,"Spot price and the 45-day forecast band at each edition");
+  const L=narrow?42:56,R=narrow?14:28,T=18,B=34, pw=W-L-R, ph=H-T-B;
+  const t=E.map(e=>new Date(e.date+"T12:00:00").getTime()), t0=Math.min(...t), t1=Math.max(...t);
+  const X=v=>L+(t1===t0?pw/2:(v-t0)/(t1-t0)*pw);
+  const vals=E.flatMap(e=>[e.p25_45,e.p75_45,e.spot]), yMin=Math.floor((Math.min(...vals)-5)/25)*25, yMax=Math.ceil((Math.max(...vals)+5)/25)*25;
+  const Y=v=>T+(yMax-v)/(yMax-yMin)*ph, step=(yMax-yMin)>150?50:25;
+  for(let v=yMin; v<=yMax; v+=step) grid(s,L,pw,Y(v),"$"+v);
+  let d="M "+X(t[0])+" "+Y(E[0].p75_45)+" "; E.forEach((e,i)=>{ if(i) d+="L "+X(t[i])+" "+Y(e.p75_45)+" "; });
+  for(let i=E.length-1;i>=0;i--) d+="L "+X(t[i])+" "+Y(E[i].p25_45)+" ";
+  s.appendChild(el("path",{d:d+"Z",fill:"var(--b50)"}));
+  const line=(k,o)=>{ let p=""; E.forEach((e,i)=>{ p+=(i?"L":"M")+X(t[i])+" "+Y(e[k])+" "; }); s.appendChild(el("path",Object.assign({d:p,fill:"none","stroke-linejoin":"round"},o))); };
+  line("spot",{stroke:"var(--ink-2)","stroke-width":1.6});
+  line("med45",{stroke:"var(--blue)","stroke-width":2.2});
+  E.forEach((e,i)=>{ s.appendChild(el("circle",{cx:X(t[i]),cy:Y(e.spot),r:3,fill:"var(--ink-2)"}));
+    s.appendChild(el("circle",{cx:X(t[i]),cy:Y(e.med45),r:3.2,fill:"var(--surface)",stroke:"var(--blue)","stroke-width":1.6})); });
+  const nt=narrow?3:6, idx=E.length<=nt?E.map((_,i)=>i):Array.from({length:nt},(_,k)=>Math.round(k*(E.length-1)/(nt-1)));
+  [...new Set(idx)].forEach((i,k,arr)=>tx(s,X(t[i]),T+ph+18,fdate(E[i].date),{"text-anchor":arr.length>1&&k===0?"start":(k===arr.length-1&&arr.length>1?"end":"middle")}));
+  const bw=pw/Math.max(1,E.length-1);
+  E.forEach((e,i)=>{ const r=el("rect",{x:X(t[i])-bw/2,y:T,width:bw,height:ph,fill:"transparent"}); s.appendChild(r);
+    hit(r,{t:e.asof,l:[`Spot $${e.spot.toFixed(2)}`,`45-day central $${Math.round(e.med45)}`,`50% band $${Math.round(e.p25_45)}–${Math.round(e.p75_45)}`],
+      m:`7-day IV ${e.iv7.toFixed(1)}%`+(e.J?` · earnings ±${e.J.toFixed(1)}%`:"")}); });
+}
+
+/* ---------- term structure ---------- */
+function drawTerm(){
+  const {s,W,H,narrow}=mk("c-term",w=>w<560?300:380,"At-the-money implied volatility by expiration, today against the previous edition");
+  const L=narrow?40:56,R=narrow?12:24,T=30,B=40, pw=W-L-R, ph=H-T-B;
+  const cur=D.term, prv=D.term_prev||[], all=[...cur,...prv];
+  const x0=Math.log(Math.max(0.6,Math.min(...all.map(p=>p.d))*0.85)), x1=Math.log(Math.max(900,Math.max(...cur.map(p=>p.d))*1.1));
+  const X=d=>L+(Math.log(d)-x0)/(x1-x0)*pw;
+  const ivs=all.map(p=>p.iv), yMin=Math.floor((Math.min(...ivs)-3)/10)*10, yMax=Math.ceil((Math.max(...ivs)+3)/10)*10;
+  const Y=v=>T+(yMax-v)/(yMax-yMin)*ph;
+  for(let v=yMin;v<=yMax;v+=10) grid(s,L,pw,Y(v),v+"%");
+  const ticks=narrow?[[1,"1d"],[7,"7d"],[30,"30d"],[90,"90d"],[365,"1y"],[730,"2y"]]:[[1,"1d"],[7,"7d"],[14,"14d"],[30,"30d"],[60,"60d"],[120,"120d"],[365,"1y"],[730,"2y"]];
+  ticks.filter(([d])=>Math.log(d)>=x0&&Math.log(d)<=x1).forEach(([d,lb])=>{
+    s.appendChild(el("line",{x1:X(d),x2:X(d),y1:T,y2:T+ph,stroke:"var(--rule-soft)","stroke-width":1}));
+    tx(s,X(d),T+ph+18,lb,{"text-anchor":"middle"});
+  });
+  if(D.earn_d){ const ex=X(Math.max(D.earn_d,Math.exp(x0)));
+    s.appendChild(el("line",{x1:ex,x2:ex,y1:T-4,y2:T+ph,stroke:"var(--accent)","stroke-width":1.4,"stroke-dasharray":"4 4",opacity:.8}));
+    tag(s,ex,T-22,narrow?"EARNINGS":D.earn_label); }
+  const line=(pts,o)=>{ let d=""; pts.forEach((p,i)=>{ d+=(i?"L":"M")+X(p.d)+" "+Y(p.iv)+" "; }); s.appendChild(el("path",Object.assign({d,fill:"none","stroke-linejoin":"round","stroke-linecap":"round"},o))); };
+  if(prv.length){ line(prv,{stroke:"var(--muted)","stroke-width":1.5,"stroke-dasharray":"4 4"});
+    prv.forEach(p=>s.appendChild(el("circle",{cx:X(p.d),cy:Y(p.iv),r:2.4,fill:"var(--muted)"}))); }
+  line(cur,{stroke:"var(--accent)","stroke-width":2});
+  cur.forEach(p=>s.appendChild(el("circle",{cx:X(p.d),cy:Y(p.iv),r:3.4,fill:"var(--surface)",stroke:"var(--accent)","stroke-width":1.8})));
+  const lab=(exp,dy,sub)=>{ const p=cur.find(q=>q.exp===exp); if(!p) return;
+    s.appendChild(el("circle",{cx:X(p.d),cy:Y(p.iv),r:6,fill:"none",stroke:"var(--ink)","stroke-width":1.5}));
+    tx(s,X(p.d),Y(p.iv)+dy,p.iv.toFixed(1)+"%",{"text-anchor":"middle",fill:"var(--ink)","font-size":12.5,"font-weight":600});
+    if(!narrow) tx(s,X(p.d),Y(p.iv)+dy+(dy>0?14:-14),sub,{"text-anchor":"middle","font-size":10.5});
+  };
+  if(D.pre_exp) lab(D.pre_exp,22,fdate(D.pre_exp)+" · pre");
+  if(D.post_exp) lab(D.post_exp,-14,fdate(D.post_exp)+" · post");
+  const pick=(arr,d)=>arr.reduce((a,b)=>Math.abs(Math.log(b.d/d))<Math.abs(Math.log(a.d/d))?b:a);
+  const pc=pick(cur,170); tx(s,X(pc.d),Y(pc.iv)+18,"Today",{"text-anchor":"middle",fill:"var(--accent-ink)","font-size":11,"font-weight":600});
+  if(prv.length){ const pp=pick(prv,170); tx(s,X(pp.d),Y(pp.iv)-9,"Previous",{"text-anchor":"middle","font-size":11}); }
+  cur.forEach(p=>{ const c=el("circle",{cx:X(p.d),cy:Y(p.iv),r:11,fill:"transparent"}); s.appendChild(c);
+    const q=prv.find(z=>z.exp===p.exp);
+    hit(c,{t:fdate(p.exp,true)+" expiry",l:[`${Math.round(p.d)} days · ATM IV ${p.iv.toFixed(1)}%`],m:q?`Previous edition: ${q.iv.toFixed(1)}%`:null}); });
+  tx(s,L,H-6,"DAYS TO EXPIRATION",{"font-size":10,"letter-spacing":"1"});
+}
+
+/* ---------- earnings bars ---------- */
+function drawEarn(){
+  const {s,W,H,narrow}=mk("c-earn",w=>w<560?270:340,"Next-session move after each recent earnings report");
+  const L=narrow?38:52,R=narrow?8:24,T=28,B=44, pw=W-L-R, ph=H-T-B, bars=D.earn, J=D.jump;
+  const mv=bars.map(b=>b.mv), yMin=Math.min(-15,Math.floor((Math.min(...mv)-3)/5)*5), yMax=Math.max(15,Math.ceil((Math.max(...mv)+3)/5)*5);
+  const Y=v=>T+(yMax-v)/(yMax-yMin)*ph, bw=pw/bars.length, inner=Math.min(bw*0.62,46);
+  if(J>0){
+    s.appendChild(el("rect",{x:L,y:Y(J),width:pw,height:Y(-J)-Y(J),fill:"var(--accent-wash)"}));
+    [J,-J].forEach(v=>s.appendChild(el("line",{x1:L,x2:L+pw,y1:Y(v),y2:Y(v),stroke:"var(--accent-line)","stroke-width":1.5,"stroke-dasharray":"5 4"})));
+    tx(s,L+pw-4,Y(J)-6,"implied ±"+J.toFixed(1)+"%",{"text-anchor":"end",fill:"var(--accent-ink)","font-weight":600});
+  }
+  for(let v=Math.ceil(yMin/10)*10; v<=yMax; v+=10) grid(s,L,pw,Y(v),(v>0?"+":v<0?"−":"")+Math.abs(v)+"%",v===0);
+  bars.forEach((b,i)=>{
+    const cx=L+bw*i+bw/2, up=b.mv>=0, y=up?Y(b.mv):Y(0), h=Math.abs(Y(b.mv)-Y(0));
+    s.appendChild(el("rect",{x:cx-inner/2,y,width:inner,height:Math.max(h,1),fill:up?"var(--teal)":"var(--red)",rx:3}));
+    tx(s,cx,up?Y(b.mv)-6:Y(b.mv)+14,narrow?fmt(b.mv,0):fmt(b.mv),{"text-anchor":"middle",fill:"var(--ink)","font-size":narrow?10:11.5,"font-weight":600});
+    if(!narrow || i%2===(bars.length-1)%2) tx(s,cx,T+ph+18,narrow?b.q.replace(" '","’"):b.q,{"text-anchor":"middle","font-size":narrow?9.5:10.5});
+    const r=el("rect",{x:cx-bw/2,y:T,width:bw,height:ph,fill:"transparent"}); s.appendChild(r);
+    hit(r,{t:b.q+" report",l:[`Next session ${fmt(b.mv)}%`],m:J>0?`${Math.abs(b.mv)>J?"Outside":"Inside"} today's ±${J.toFixed(1)}% band`:null});
+  });
+  tx(s,L,H-6,"QUARTER REPORTED",{"font-size":10,"letter-spacing":"1"});
+}
+
+/* ---------- fan chart ---------- */
+function drawFan(){
+  const {s,W,H,narrow}=mk("c-fan",w=>w<560?320:420,"Forecast cone for AVGO over 45 days with 50% and 80% bands and the market-implied 5% and 95% levels");
+  const L=narrow?42:58,R=narrow?40:84,T=30,B=40, pw=W-L-R, ph=H-T-B;
+  const SP=D.spot, P=D.phys, RN=D.rn, days=[0,...P.map(r=>r.dte)];
+  const g=k=>[SP,...P.map(r=>r[k])], p10=g("p10"),p25=g("p25"),med=g("median"),p75=g("p75"),p90=g("p90");
+  const r05=[SP,...RN.map(r=>r.p05)], r95=[SP,...RN.map(r=>r.p95)];
+  const X=d=>L+d/45*pw;
+  const yMin=Math.floor((Math.min(...r05)-10)/50)*50, yMax=Math.ceil((Math.max(...r95)+10)/50)*50;
+  const Y=v=>T+(yMax-v)/(yMax-yMin)*ph;
+  for(let v=yMin+50; v<yMax; v+=50) grid(s,L,pw,Y(v),"$"+v);
+  const band=(lo,hi,fill)=>{ let d="M "+X(0)+" "+Y(hi[0])+" "; days.forEach((dd,i)=>{ if(i) d+="L "+X(dd)+" "+Y(hi[i])+" "; });
+    for(let i=days.length-1;i>=0;i--) d+="L "+X(days[i])+" "+Y(lo[i])+" "; s.appendChild(el("path",{d:d+"Z",fill})); };
+  band(p10,p90,"var(--b80)"); band(p25,p75,"var(--b50)");
+  const path=(a,o)=>{ let d=""; days.forEach((dd,i)=>{ d+=(i?"L":"M")+X(dd)+" "+Y(a[i])+" "; }); s.appendChild(el("path",Object.assign({d,fill:"none","stroke-linejoin":"round"},o))); };
+  [p25,p75].forEach(a=>path(a,{stroke:"var(--blue)","stroke-width":1,opacity:.42}));
+  s.appendChild(el("line",{x1:L,x2:L+pw,y1:Y(SP),y2:Y(SP),stroke:"var(--ink-2)","stroke-width":1,"stroke-dasharray":"2 4",opacity:.55}));
+  [r05,r95].forEach(a=>path(a,{stroke:"var(--accent)","stroke-width":1.6,"stroke-dasharray":"5 4",opacity:.9}));
+  path(med,{stroke:"var(--blue)","stroke-width":2.4});
+  if(D.earn_d && D.earn_d<=45){ const ex=X(D.earn_d);
+    s.appendChild(el("line",{x1:ex,x2:ex,y1:T,y2:T+ph,stroke:"var(--accent)","stroke-width":1.4,"stroke-dasharray":"4 4",opacity:.75}));
+    tag(s,ex,T-22,narrow?"EARNINGS":D.earn_label); }
+  const tl=[["today",0],...P.map(r=>[r.date,r.dte])].filter(([,d])=>!(narrow&&(d===10||d===0)));
+  tl.forEach(([lb,d],i)=>{ s.appendChild(el("line",{x1:X(d),x2:X(d),y1:T+ph,y2:T+ph+5,stroke:"var(--rule)","stroke-width":1}));
+    tx(s,X(d),T+ph+18,lb,{"text-anchor":d===0?"start":(i===tl.length-1?"end":"middle")}); });
+  s.appendChild(el("circle",{cx:X(0),cy:Y(SP),r:4,fill:"var(--blue)"}));
+  const n=days.length-1, lab=(v,col,wt)=>tx(s,L+pw+8,Y(v)+4,Math.round(v).toString(),{fill:col,"font-size":narrow?10.5:11.5,"font-weight":wt||500});
+  lab(med[n],"var(--blue)",700); lab(p75[n],"var(--ink-2)"); lab(p25[n],"var(--ink-2)");
+  if(Y(p90[n])-Y(r95[n])>13){ lab(p90[n],"var(--muted)"); lab(r95[n],"var(--accent-ink)"); } else lab(r95[n],"var(--accent-ink)");
+  if(Y(r05[n])-Y(p10[n])>13){ lab(p10[n],"var(--muted)"); lab(r05[n],"var(--accent-ink)"); } else lab(r05[n],"var(--accent-ink)");
+  tx(s,L+6,Y(SP)-8,"spot "+SP.toFixed(2),{fill:"var(--ink-2)"});
+  const hl=el("line",{x1:0,x2:0,y1:T,y2:T+ph,stroke:"var(--ink-2)","stroke-width":1,opacity:0}); s.appendChild(hl);
+  P.forEach((r,i)=>{ const d=r.dte, prev=days[i], next=i+1<P.length?P[i+1].dte:45;
+    const x0=X((prev+d)/2), x1=i+1<P.length?X((d+next)/2):L+pw;
+    const rr=el("rect",{x:x0,y:T,width:x1-x0,height:ph,fill:"transparent"}); s.appendChild(rr);
+    hit(rr,{t:`${r.label} · ${r.date}`,l:[`Central $${Math.round(r.median)}`,`50%: $${Math.round(r.p25)}–${Math.round(r.p75)}`,`80%: $${Math.round(r.p10)}–${Math.round(r.p90)}`],m:`Market 5–95%: $${Math.round(RN[i].p05)}–${Math.round(RN[i].p95)}`},
+      ()=>{ hl.setAttribute("x1",X(d)); hl.setAttribute("x2",X(d)); hl.setAttribute("opacity",.5); }, ()=>hl.setAttribute("opacity",0)); });
+}
+
+/* ---------- cross-complex bars ---------- */
+function drawComplex(){
+  const {s,W,H,narrow}=mk("c-complex",w=>w<560?250:300,"Five-session change for AVGO, NVDA, AMD, SMH and QQQ");
+  const L=narrow?38:56,R=narrow?8:30,T=22,B=40, pw=W-L-R, ph=H-T-B;
+  const data=D.complex.slice().sort((a,b)=>b.v-a.v);
+  const vs=data.map(d=>d.v), yMin=Math.floor((Math.min(0,...vs)-3)/5)*5, yMax=Math.ceil((Math.max(0,...vs)+3)/5)*5;
+  const Y=v=>T+(yMax-v)/(yMax-yMin)*ph, bw=pw/data.length, inner=Math.min(bw*0.5,64);
+  const step=(yMax-yMin)>30?10:5;
+  for(let v=Math.ceil(yMin/step)*step; v<=yMax; v+=step) grid(s,L,pw,Y(v),(v>0?"+":v<0?"−":"")+Math.abs(v)+"%",v===0);
+  data.forEach((d,i)=>{
+    const cx=L+bw*i+bw/2, up=d.v>=0, y=up?Y(d.v):Y(0), h=Math.abs(Y(d.v)-Y(0)), hi=d.t==="AVGO";
+    s.appendChild(el("rect",{x:cx-inner/2,y,width:inner,height:Math.max(h,1),fill:hi?"var(--accent)":"var(--muted)",opacity:hi?1:.55,rx:3}));
+    tx(s,cx,up?Y(d.v)-7:Y(d.v)+16,fmt(d.v)+"%",{"text-anchor":"middle",fill:hi?"var(--ink)":"var(--ink-2)","font-size":narrow?11:12.5,"font-weight":hi?700:500});
+    tx(s,cx,T+ph+22,d.t,{"text-anchor":"middle",fill:hi?"var(--ink)":"var(--muted)","font-size":12,"font-weight":hi?700:500});
+    const r=el("rect",{x:cx-bw/2,y:T,width:bw,height:ph,fill:"transparent"}); s.appendChild(r);
+    hit(r,{t:d.t,l:d.days.map(x=>`${x[0]}: ${fmt(x[1])}%`),m:`5 sessions: ${fmt(d.v)}% · 20 sessions: ${fmt(d.v20)}%`});
+  });
+}
+
+function drawAll(){ drawSpark(); drawHistory(); drawTerm(); drawEarn(); drawFan(); drawComplex(); }
+drawAll();
+let rt=null, lastW=innerWidth;
+addEventListener("resize",()=>{ if(Math.abs(innerWidth-lastW)<4) return; lastW=innerWidth; cancelAnimationFrame(rt); rt=requestAnimationFrame(drawAll); });
+</script>

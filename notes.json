@@ -1,0 +1,28 @@
+[
+  {
+    "date": "2026-11-23",
+    "title": "Nvidia reinstates Jensen Huang; the sector bounces and Broadcom lags",
+    "paras": [
+      "Nvidia's board reinstated Jensen Huang as CEO on 23 November, eleven days after he resigned over a scandal involving an alleged Chinese intelligence contact. Nvidia rose 31.5%, its best day since 2003, and the Nasdaq had its best session since April 2025. The SEC's civil probe into Nvidia's disclosures and the related export-control investigations had not been reported as resolved.",
+      "Broadcom rose only 3.0% that day. Measured from the 19 November close, the last before the TPU report, AVGO was −9.6% while the semiconductor ETF (SMH) was +2.8% and Nvidia +13.1%. On 20 November the AI-chip names had fallen together, so the drop looked like a sector move. The sector recovered all of it; Broadcom did not.",
+      "One reading fits the pattern. A leaderless Nvidia gave hyperscalers a reason to commission more custom silicon, which is Broadcom's core business. Huang's return weakens that reason, and the two names most exposed to it, Broadcom and AMD, lagged the rally. The price data is consistent with this interpretation, but it does not prove it.",
+      "Channels from the Nvidia story that still bear on Broadcom: <strong>export controls</strong> (tighter curbs on where advanced AI silicon can go; Broadcom's Tomahawk and Jericho networking chips and custom ASICs ship into the same buildout), <strong>disclosure scrutiny</strong> (the SEC probe raises the bar for the group's customer-concentration reporting), and <strong>custom-silicon demand</strong> (weaker now that Nvidia has its leader back)."
+    ]
+  },
+  {
+    "date": "2026-11-20",
+    "title": "Google TPU order report: Broadcom falls 12.2%",
+    "paras": [
+      "Ming-Chi Kuo's industry survey reported that Google cut roughly <strong>1 million units</strong>, about 20%, from its 2027 shipments of the Broadcom-designed TPU 8i series. The cut is concentrated in the higher-priced 8i Max (\"Whalefish\"), with volume shifting toward the MediaTek-designed TPU 8t. Neither Google nor Broadcom commented, and Broadcom did not change its guidance. The stock lost about $191B of market value that session.",
+      "Kuo described a <strong>mix shift</strong>: Google's total compute plan is intact, and Broadcom's share of it is what fell. Against management's guidance of roughly $115B of FY2027 AI revenue, 1M units of 8i Max is plausibly $8–15B, or 7–13% of the AI line. The market repriced about four times that. Either it is extrapolating one customer's decision into a broader loss for custom ASICs, or it overshot a contained revision. The 9 December guidance is what settles it."
+    ]
+  },
+  {
+    "date": "2026-11-20",
+    "title": "A statistic deliberately left out of the forecast",
+    "paras": [
+      "Broadcom has fallen more than 10% in a session ten times since 2019. Measured from those days, the stock was on average up 21.2% twenty days later and up 25.7% at 45 days. Taken at face value that is a strongly bullish signal.",
+      "It is not used here. The sample is eight to ten overlapping observations, all inside a secular bull market in semiconductors, and the largest contributors are the March 2020 rebound and the 2024–25 AI melt-up. A backtest with n=8 drawn from one regime is an anecdote with error bars."
+    ]
+  }
+]

@@ -1,0 +1,8 @@
+.venv/
+__pycache__/
+work/
+site/
+*.pkl
+.DS_Store
+_orig-*/
+avgo-report*.html

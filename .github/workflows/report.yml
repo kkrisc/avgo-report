@@ -1,0 +1,69 @@
+name: Refresh AVGO report
+
+on:
+  workflow_dispatch:          # "Run workflow" button in the GitHub mobile app or website
+    inputs:
+      allow_last_trades:
+        description: "Build even without live quotes (market closed): uses last trades, lower quality"
+        type: boolean
+        default: false
+  schedule:
+    - cron: "47 15 * * 1-5"   # weekdays 15:47 UTC = 10:47am New York (winter), 11:47am (summer)
+
+# Nothing is granted by default; each job asks for only what it needs.
+permissions: {}
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: read          # read this repo's code, nothing else
+    outputs:
+      deploy: ${{ steps.build.outputs.deploy }}
+    steps:
+      # Every action is pinned to a full commit SHA, so a moved tag can't swap in different code.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.14"
+
+      # Exact versions and SHA-256 checksums for every package; a tampered package fails to install.
+      - name: Install pinned dependencies
+        run: python -m pip install --require-hashes --no-deps -r requirements.txt
+
+      # Scheduled runs (and manual runs by default) skip publishing when there are no live quotes,
+      # so a holiday or data outage never replaces a good page with a worse one.
+      - name: Run pipeline and build page
+        id: build
+        env:
+          REQUIRE_LIVE: ${{ inputs.allow_last_trades && '0' || '1' }}
+          PREV_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/data.json
+        run: bash run.sh site/index.html
+
+      - if: steps.build.outputs.deploy == 'true'
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    if: needs.build.outputs.deploy == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      pages: write            # publish to GitHub Pages
+      id-token: write         # short-lived token Pages uses to verify this run
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1

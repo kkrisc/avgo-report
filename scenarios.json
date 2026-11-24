@@ -1,0 +1,22 @@
+{
+  "event_date": "2026-12-09",
+  "written": "2026-11-20",
+  "revised": "2026-11-24",
+  "swing": "what management guides for FY2027 AI revenue, against a standing target of roughly $115B",
+  "scenarios": [
+    {"title": "Guidance holds", "p": 0.22, "move": 0.12,
+     "desc": "FY27 AI revenue reaffirmed at ≥$115B, Google shift framed as a contained mix change. A cautious tape still caps the re-rating."},
+    {"title": "Guidance trimmed", "p": 0.36, "move": -0.03,
+     "desc": "FY27 AI revenue guided to $100–112B, acknowledging the 8i Max mix shift."},
+    {"title": "Guidance cut", "p": 0.28, "move": -0.17,
+     "desc": "FY27 AI revenue below $100B, or the 8i Max reduction shows up explicitly in backlog commentary."},
+    {"title": "Cut plus contagion", "p": 0.14, "move": -0.30,
+     "desc": "A guidance cut compounds with Anthropic credit-exposure scrutiny and export-control or disclosure scrutiny reaching Broadcom."}
+  ],
+  "alternative": {
+    "label": "the original weights used before adding the Nvidia factor (30/40/22/8, moves +16/−1/−15/−27%)",
+    "p": [0.30, 0.40, 0.22, 0.08],
+    "move": [0.16, -0.01, -0.15, -0.27],
+    "why": "Part of the tail weight came from Nvidia-driven contagion, and Nvidia's reinstatement of Jensen Huang on 23 November weakened that channel."
+  }
+}
